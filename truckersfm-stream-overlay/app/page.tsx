@@ -9,9 +9,7 @@ export default function Home() {
   const { data, error } = useSWR("https://radiocloud.pro/api/public/v1/song/current", (url) => {
     return fetch(url).then((res) => res.json())
   }, { refreshInterval: 10000 });
-
-  if (error) return <div>TruckersFM API failed to return data</div>;
-
+  
   const artist = data?.data.artist;
   const title = data?.data.title;
   const cover = data?.data.album_art;
@@ -29,11 +27,14 @@ export default function Home() {
   }
 
   useEffect(() => {
+    if (!timestamp) return;
     const interval = setInterval(() => {
       setSince(timeSince(new Date(timestamp * 1000)));
     }, 1000);
     return () => clearInterval(interval);
   }, [timestamp]);
+
+  if (error) return <div>TruckersFM API failed to return data</div>;
 
   return (
     <div className="border border-[#191919] flex rounded-xl w-xl h-40.5 font-geist bg-[#131313] relative p-4 overflow-hidden">
