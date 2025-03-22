@@ -21,22 +21,16 @@ jobs:
         with:
           node-version: 22
 
-      - name: Debug
-        run: ls -R
-
-      - name: Move to the app directory
-        run: cd truckersfm-stream-overlay
-
-      - name: Debug
-        run: ls -R
-
       - name: Install dependencies
+        working-directory: ./truckersfm-stream-overlay
         run: npm install
 
       - name: Build & Export the app
+        working-directory: ./truckersfm-stream-overlay
         run: npm run build
 
       - name: Deploy to GitHub Pages
+        working-directory: ./truckersfm-stream-overlay
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
