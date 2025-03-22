@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import useSWR from "swr";
 import { useEffect, useState } from "react";
 
@@ -38,7 +37,11 @@ export default function Home() {
 
   return (
     <div className="border border-[#191919] flex rounded-xl w-xl h-40.5 font-geist bg-[#131313] relative p-4 overflow-hidden">
-      {cover && <Image src={cover} alt="Cover" width={200} height={200} className="w-32 h-32 rounded-md border z-10" />}
+      {cover && <div className="w-32 h-32 rounded-md border z-10" style={{
+        backgroundImage: `url(${cover})`, 
+        backgroundSize: 'cover', 
+        backgroundPosition: 'center',
+      }} />}
       <div className="flex flex-col pl-4 z-10">
         <p className="text-xl font-semibold">{title}</p>
         <p className="text-sm font-semibold">by {artist}</p>
