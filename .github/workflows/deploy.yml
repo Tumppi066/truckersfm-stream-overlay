@@ -30,9 +30,9 @@ jobs:
         run: npm run build
 
       - name: Deploy to GitHub Pages
-        working-directory: ./truckersfm-stream-overlay
         uses: peaceiris/actions-gh-pages@v3
         with:
+          working-directory: ./truckersfm-stream-overlay
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./out
           cname: tfm.tumppi066.com
