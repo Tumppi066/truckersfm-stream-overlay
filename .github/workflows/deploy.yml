@@ -21,8 +21,8 @@ jobs:
         with:
           node-version: 22
 
-      - name: Move to the app directory
-        run: cd truckersfm-stream-overlay
+      #- name: Move to the app directory
+      #  run: cd truckersfm-stream-overlay
 
       - name: Install dependencies
         run: npm install
