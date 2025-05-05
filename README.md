@@ -1,6 +1,12 @@
 ### TruckersFM Stream Overlay
 Simple overlay for streamers listening to TruckersFM. Just add a browser source to your streaming software and you're good to go!
 
+### Features
+- Displays the current song and artist.
+- Progress to the song end, if MusicBrainz is available.
+  - Please note that this might sometimes be off by a few seconds.
+- During intermissions displays the current DJ.
+
 ### Installation
 1. Copy the following URL: `https://tfm.tumppi066.fi`
 2. Add a new browser source in your streaming software.
@@ -10,8 +16,9 @@ Simple overlay for streamers listening to TruckersFM. Just add a browser source 
 ### Screenshots
 Whatever is on [right now](https://tfm.tumppi066.fi)!
 
-![Screenshot](media/party_at_my_house.png)
-![Screenshot](media/love_myself.png)
+![Screenshot](media/life_is_a_highway.png)
+![Screenshot](media/shape_of_you.png)
+![Screenshot](media/groove_and_move.png)
 
 ### FAQ
 > Why do you not have a progress bar?
