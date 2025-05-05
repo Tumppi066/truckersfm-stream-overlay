@@ -61,6 +61,13 @@ export default function Home() {
     return cover;
   }
 
+  const isValidDisambiguation = (text: string) => {
+    if (!text) return true; // No disambiguation, valid
+    if (text == "clean" || text == "explicit") return true;
+    if (text.includes("Dolby Atmos")) return true;
+    return false;
+  }
+
   useEffect(() => {
     if (!link) return;
     const query = 'query=artist:"' + artist + '" AND recording:"' + title + '"';
@@ -69,7 +76,7 @@ export default function Home() {
       if (recordings.length === 0) setEnd(null);
       for(let i = 0; i < recordings.length; i++) {
         const recording = recordings[i];
-        if (recording.disambiguation) continue; // Skip disambiguated recordings
+        if (!isValidDisambiguation(recording.disambiguation)) continue; // Skip disambiguated recordings
         if (recording.video) continue; // Skip video recordings
         if (recording.title !== title) continue; // Skip recordings with different titles
         if (!recording.length) continue; // Skip recordings without length
