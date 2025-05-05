@@ -21,7 +21,7 @@ export default function Home() {
 
   const { data: presenterData, error: presenterError } = useSWR("https://radiocloud.pro/api/public/v1/presenter/live", (url) => {
     return fetch(url).then((res) => res.json())
-  }, { refreshInterval: 10000 });
+  }, { refreshInterval: 30000 });
 
   const artist = songData?.data.artist;
   const title = songData?.data.title;
@@ -70,21 +70,33 @@ export default function Home() {
 
   useEffect(() => {
     if (!link) return;
-    const query = 'query=artist:"' + artist + '" AND recording:"' + title + '"';
+    let search_title = title;
+    const featIndex = title.indexOf(" (feat. ");
+    if (featIndex !== -1) {
+      search_title = title.substring(0, featIndex);
+    }
+    const query = 'query=artist:"' + artist + '" AND recording:"' + search_title + '"';
     musicbrainz.search("recording", {query}).then((res) => {
       const recordings = res.recordings;
       if (recordings.length === 0) setEnd(null);
+      console.log("Found " + recordings.length + " recordings for " + title + " by " + artist);
       for(let i = 0; i < recordings.length; i++) {
         const recording = recordings[i];
         if (!isValidDisambiguation(recording.disambiguation)) continue; // Skip disambiguated recordings
+        console.log(i + " passed disambiguation check");
         if (recording.video) continue; // Skip video recordings
-        if (recording.title !== title) continue; // Skip recordings with different titles
+        console.log(i + " passed video check");
+        if (recording.title.replaceAll("'", "’") != search_title.replaceAll("'", "’")) continue; // Skip recordings with different titles
+        console.log(i + " passed title check");
         if (!recording.length) continue; // Skip recordings without length
+        console.log(i + " passed length check");
         if (recording.length < 20000) continue; // Skip recordings with length less than 20 seconds
+        console.log(i + " passed 20s check");
         const length = recording.length;
         const endTime = new Date(timestamp * 1000);
         endTime.setSeconds(endTime.getSeconds() + length / 1000);
         setEnd(endTime);
+        console.log("Found end time: " + endTime.toString() + " for " + title + " by " + artist);
         return;
       }
       setEnd(null);
