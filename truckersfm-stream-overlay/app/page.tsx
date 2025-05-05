@@ -27,7 +27,7 @@ export default function Home() {
   const title = songData?.data.title;
   const cover = songData?.data.album_art;
   const timestamp = songData?.data.played_at;
-  const intermission = end !== null && end.getTime() < new Date().getTime();
+  const intermission = end !== null && end.getTime() + 10 < new Date().getTime();
 
   const description = presenterData?.data.description;
   const name = presenterData?.data.user.name;

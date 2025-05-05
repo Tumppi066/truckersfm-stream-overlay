@@ -4,7 +4,7 @@ Simple overlay for streamers listening to TruckersFM. Just add a browser source 
 ### Features
 - Displays the current song and artist.
 - Progress to the song end, if MusicBrainz is available.
-  - Please note that this might sometimes be off by a few seconds.
+  - Please note that this might sometimes be off by a few seconds. This can be due to many factors, including radio mixes and desync between the stream and the API. I've added a 10s buffer in the intermission timing to account for this.
 - During intermissions displays the current DJ.
 
 ### Installation
