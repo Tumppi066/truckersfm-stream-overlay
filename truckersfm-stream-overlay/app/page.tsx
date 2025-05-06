@@ -86,7 +86,7 @@ export default function Home() {
         console.log(i + " passed disambiguation check");
         if (recording.video) continue; // Skip video recordings
         console.log(i + " passed video check");
-        if (recording.title.replaceAll("'", "’") != search_title.replaceAll("'", "’")) continue; // Skip recordings with different titles
+        if (recording.title.replaceAll("'", "’").toLowerCase() != search_title.replaceAll("'", "’").toLowerCase()) continue; // Skip recordings with different titles
         console.log(i + " passed title check");
         if (!recording.length) continue; // Skip recordings without length
         console.log(i + " passed length check");
