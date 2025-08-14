@@ -3,8 +3,9 @@ Simple overlay for streamers listening to TruckersFM. Just add a browser source 
 
 ### Features
 - Displays the current song and artist.
-- Progress to the song end, if MusicBrainz is available.
-  - Please note that this might sometimes be off by a few seconds. This can be due to many factors, including radio mixes and desync between the stream and the API. I've added a 10s buffer in the intermission timing to account for this.
+- Progress display (other overlays don't have this!).
+  - Please note that this might sometimes be off by a few seconds. This can be due to many factors, including radio mixes and desync between the stream and the API
+  - Uses the free MusicBrainz API to get the song end time.
 - During intermissions displays the current DJ.
 
 ### Installation
@@ -13,21 +14,19 @@ Simple overlay for streamers listening to TruckersFM. Just add a browser source 
 3. Set `width` to `580px` and `height` to `170px`.
 4. Done!
 
-### Screenshots
+### Preview
 Whatever is on [right now](https://tfm.tumppi066.fi)!
 
-![Screenshot](media/life_is_a_highway.png)
-![Screenshot](media/shape_of_you.png)
-![Screenshot](media/groove_and_move.png)
+![Screenshot](media/waterfront.png)
 
 ### FAQ
-> Why do you not have a progress bar?
+> Why do some songs not have a progress bar?
 
-The TruckersFM API does not provide progress. We do have a spotify link but implementing that is too much work for what it's worth.
+The TruckersFM API does not provide progress. I've implemented a workaround that uses free and public APIs, all songs however are not correctly detected. It is what it is, unless TFM adds the song end time to the API there's not much I can do about it. 
 
 > Why does the song display during ads and talking?
 
-That's what the API does. There is no break in the stream, we just get the current song and the start time.
+That's what the API does. There is no break in the stream, we just get the current song and the start time. I have implemented features to try and automatically detect intermissions. It's not 100% accurate though.
 
 > Why does it take some time to update?
 
@@ -40,6 +39,10 @@ Because you are playing music from TruckersFM. It's rude to not give them credit
 > Do you need credit?
 
 Not if you don't want to. I'm totally fine with streamers not crediting at all. If you are going to make a fork for your own changes then I would appreciate a mention there.
+
+> Why is the title not bold?
+
+I follow the [TruckersFM brand guidelines](https://truckers.fm/brand-usage) that state all text should be in regular. That's all.
 
 ### How can I run this locally?
 #### Install the webpage (first time only)

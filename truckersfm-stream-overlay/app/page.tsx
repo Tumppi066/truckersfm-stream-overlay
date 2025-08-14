@@ -125,7 +125,7 @@ export default function Home() {
 
   return (
     <div className="border border-[#191919] flex rounded-xl w-xl h-40.5 font-geist bg-[#131313] relative p-4 overflow-hidden">
-      {cover && <div className="w-32 h-32 rounded-md border z-10" style={{
+      {cover && <div className="min-w-32 min-h-32 rounded-md border z-10" style={{
         backgroundImage: `url(${getImageUrl()})`, 
         backgroundSize: 'cover', 
         backgroundPosition: 'center',
@@ -141,7 +141,7 @@ export default function Home() {
             <Image
               src="/tfm.svg"
               alt=""
-              width={72}
+              width={74}
               height={1}
             />
           </div>
@@ -155,7 +155,7 @@ export default function Home() {
             <Image
               src="/tfm.svg"
               alt=""
-              width={72}
+              width={74}
               height={1}
             />
           </div>
