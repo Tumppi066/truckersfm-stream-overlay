@@ -10,7 +10,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ progress }) => {
   return (
     <div className="absolute w-xl bg-[#00000] bottom-0 left-0 top-0">
       <div
-        className='bg-[#8e8b8f11] h-full transition-all duration-500 ease-in-out'
+        className='bg-[#8e8b8f15] h-full transition-all duration-500 ease-in-out'
         style={{
           width: `${clampProgress}%`,
         }}

@@ -4,6 +4,8 @@ import useSWR from "swr";
 import { useEffect, useState } from "react";
 import { MusicBrainzApi } from 'musicbrainz-api';
 import ProgressBar from '../components/progress';
+import Image from 'next/image';
+import "@/public/tfm.svg";
 
 const musicbrainz = new MusicBrainzApi({
   appName: 'TruckersFM Stream Overlay',
@@ -134,13 +136,29 @@ export default function Home() {
           <p className="text-sm font-semibold">by {artist}</p>
           {end && <p className="text-sm">{since} / {timeBetween(new Date(timestamp * 1000), end)}</p>}
           {!end && <p className="text-sm">{since}</p>}
-          <p className="text-sm text-[#8e8b8f] absolute bottom-4">Playing now on TruckersFM</p>
+          <div className="absolute bottom-4 flex gap-[5px]">
+            <p className="text-sm text-[#8e8b8f]">Playing now on</p>
+            <Image
+              src="/tfm.svg"
+              alt=""
+              width={72}
+              height={1}
+            />
+          </div>
         </div>
         :
         <div className="flex flex-col pl-4 z-10">
           <p className="text-xl font-semibold">{description}</p>
           <p className="text-sm font-semibold">by {name}</p>
-          <p className="text-sm text-[#8e8b8f] absolute bottom-4">Presenting now at TruckersFM</p>
+          <div className="absolute bottom-4 flex gap-[5px]">
+            <p className="text-sm text-[#8e8b8f]">Presenting now at</p>
+            <Image
+              src="/tfm.svg"
+              alt=""
+              width={72}
+              height={1}
+            />
+          </div>
         </div>
       }
       {cover &&
@@ -151,7 +169,7 @@ export default function Home() {
           filter: 'blur(20px) brightness(0.3)',
         }} />
       }
-      {end && <ProgressBar progress={Math.floor((new Date().getTime() - new Date(timestamp * 1000).getTime()) / (end.getTime() - new Date(timestamp * 1000).getTime()) * 100)} />}
+      {end && !intermission && <ProgressBar progress={Math.floor((new Date().getTime() - new Date(timestamp * 1000).getTime()) / (end.getTime() - new Date(timestamp * 1000).getTime()) * 100)} />}
     </div>
   );
 }

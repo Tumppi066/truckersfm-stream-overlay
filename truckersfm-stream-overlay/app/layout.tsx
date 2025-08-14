@@ -3,16 +3,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
 export const metadata: Metadata = {
   title: "TruckersFM Stream Overlay",
   description: "OBS compatible stream overlay for TruckersFM",
@@ -26,7 +16,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-transparent`}
+        className={`antialiased bg-transparent`}
+        style={{ fontFamily: "var(--font-parkisans)" }}
       >
         <ThemeProvider
           attribute="class"
