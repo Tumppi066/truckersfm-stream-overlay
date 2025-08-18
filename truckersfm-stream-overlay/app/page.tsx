@@ -207,8 +207,11 @@ export default function Home() {
         <p className="text-sm">by {intermission ? name : artist}</p>
         
         {
-          end && !intermission ? <p className="text-sm">{since} / {timeBetween(new Date(timestamp * 1000), end)}</p>
-          : !end && <p className="text-sm">{since}</p>
+          end && !intermission ? <p className="text-sm">{since} / {timeBetween(new Date(timestamp * 1000), end)}</p> : null
+        }
+
+        {
+          !end && !intermission ? <p className="text-sm">{since}</p> : null
         }
       </div>
 
