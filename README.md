@@ -7,12 +7,14 @@ Simple overlay for streamers listening to TruckersFM. Just add a browser source 
   - Please note that this might sometimes be off by a few seconds. This can be due to many factors, including radio mixes and desync between the stream and the API
   - Uses the free MusicBrainz API to get the song end time.
 - During intermissions displays the current DJ.
+- Adjustable scaling to fit all streaming software and canvas resolutions.
 
 ### Installation
 1. Copy the following URL: `https://tfm.tumppi066.fi`
-2. Add a new browser source in your streaming software.
-3. Set `width` to `580px` and `height` to `170px`.
-4. Done!
+2. Add a new browser source in your streaming software with that URL.
+3. *(Optional)* Set `width` to `580px` and `height` to `170px`.
+4. *(Optional)* Adjust the scaling by adding `/?scale=1.0` to the URL, where `1.0` is the scale factor.
+5. Done!
 
 ### Preview
 Whatever is on [right now](https://tfm.tumppi066.fi)!
@@ -20,6 +22,10 @@ Whatever is on [right now](https://tfm.tumppi066.fi)!
 ![Screenshot](media/waterfront.png)
 
 ### FAQ
+> Why is the song stop time off by a few seconds or minutes?
+
+We use your PC's internal clock, you should check that it's synced to a satisfactory level. You can use https://time.is to check your offset. Any offset will directly translate to the progress bar being off!
+
 > Why do some songs not have a progress bar?
 
 The TruckersFM API does not provide progress. I've implemented a workaround that uses free and public APIs, all songs however are not correctly detected. It is what it is, unless TFM adds the song end time to the API there's not much I can do about it. 

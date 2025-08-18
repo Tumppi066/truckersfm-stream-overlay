@@ -15,8 +15,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`antialiased bg-transparent`}
-        style={{ fontFamily: "var(--font-parkisans)" }}
+        className={`antialiased bg-transparent w-screen h-screen flex flex-col items-center justify-center`}
+        style={{ 
+          fontFamily: "var(--font-parkisans)",
+        }}
       >
         <ThemeProvider
           attribute="class"
