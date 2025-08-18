@@ -19,7 +19,8 @@ Simple overlay for streamers listening to TruckersFM. Just add a browser source 
 ### Preview
 Whatever is on [right now](https://tfm.tumppi066.fi)!
 
-![Screenshot](media/waterfront.png)
+![Slightly Old Screenshot](media/waterfront.png)
+![Screenshot](media/wasted_love.png)
 
 ### FAQ
 > Why is the song stop time off by a few seconds or minutes?
