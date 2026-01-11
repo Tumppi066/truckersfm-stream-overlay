@@ -5,8 +5,7 @@ interface ProgressBarProps {
 }
 
 const ProgressBar: React.FC<ProgressBarProps> = ({ progress }) => {
-  const clampProgress = Math.min(100, Math.max(0, progress)); // Ensure progress is between 0 and 100
-
+  const clampProgress = Math.min(100, Math.max(0, progress));
   return (
     <div className="absolute w-full bottom-0 left-0 top-0">
       <div

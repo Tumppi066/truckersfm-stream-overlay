@@ -3,44 +3,15 @@
 import useSWR from "swr";
 import { useEffect, useState } from "react";
 import { MusicBrainzApi } from 'musicbrainz-api';
+import { 
+  getImageUrl, 
+  timeSince,
+  timeBetween,
+  isValidRecording,
+} from '../lib/tfm_utils';
 import ProgressBar from '../components/progress';
 import Image from 'next/image';
 import "@/public/tfm.svg";
-
-const timeSince = (date: Date) => {
-  const now = new Date();
-  const diff = now.getTime() - date.getTime();
-  const minutes = Math.floor(diff / 1000 / 60) % 60;
-  const seconds = Math.floor(diff / 1000) % 60;
-
-  const minutesString = minutes.toString().padStart(2, '0');
-  const secondsString = seconds.toString().padStart(2, '0');
-  return `${minutesString}:${secondsString}`;
-}
-
-const timeBetween = (start: Date, end: Date) => {
-  const diff = end.getTime() - start.getTime();
-  const minutes = Math.floor(diff / 1000 / 60) % 60;
-  const seconds = Math.floor(diff / 1000) % 60;
-
-  const minutesString = minutes.toString().padStart(2, '0');
-  const secondsString = seconds.toString().padStart(2, '0');
-  return `${minutesString}:${secondsString}`;
-}
-
-const similarity = (a: string, b: string) => {
-  const aWords = a.toLowerCase().split(/\s+/);
-  const bWords = b.toLowerCase().split(/\s+/);
-  let matches = 0;
-
-  for (const wordA of aWords) {
-    if (bWords.includes(wordA)) {
-      matches++;
-    }
-  }
-
-  return matches / Math.max(aWords.length, bWords.length);
-}
 
 const musicbrainz = new MusicBrainzApi({
   appName: 'TruckersFM Stream Overlay',
@@ -53,59 +24,41 @@ export default function Home() {
   const [link, setLink] = useState<string>("");
   const [end, setEnd] = useState<Date | null>(null);
 
-  // Get ?scale=... from the URL
+  // Handle URL parameters (just scale atm)
   useEffect(() => {
     if (!window) return;
     const searchParams = new URLSearchParams(window.location.search);
     const scale = searchParams.get("scale") || "1";
     document.documentElement.style.setProperty("--scale", scale);
-  }, [window])
+  }, [window]);
 
   // Song info fetched every 10 seconds
   const { data: songData, error: songError } = useSWR("https://radiocloud.pro/api/public/v1/song/current", (url) => {
-    return fetch(url).then((res) => res.json())
+    return fetch(url).then((res) => res.json());
   }, { refreshInterval: 10000 });
 
   // Presenter info fetched every 30 seconds
-  // (I could make it even slower but this is fine)
+  // (Could be even slower but this is fine)
   const { data: presenterData, error: presenterError } = useSWR("https://radiocloud.pro/api/public/v1/presenter/live", (url) => {
-    return fetch(url).then((res) => res.json())
+    return fetch(url).then((res) => res.json());
   }, { refreshInterval: 30000 });
 
   const artist = songData?.data.artist;
   const title = songData?.data.title;
   const cover = songData?.data.album_art;
   const timestamp = songData?.data.played_at;
+  const timestampDate = timestamp ? new Date(timestamp * 1000) : new Date();
 
   const description = presenterData?.data.description;
   const name = presenterData?.data.user.name;
   const intermission_image = presenterData?.data.image;
 
   // If the end time is set, then check if we are currently
-  // in an intermission period.
+  // in an intermission period (i.e. the song has ended and now ads are playing.)
   const intermission = end !== null && end.getTime() + 10 < new Date().getTime();
 
-  const getImageUrl = () => {
-    if (intermission) {
-      // Until TFM releases an updated 1x1 image then this is the best standby we can do...
-      return intermission_image || "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/TruckersFM_New_Logo.png/960px-TruckersFM_New_Logo.png";
-    }
-    return cover;
-  }
-
-  // Disambiguation is what musicbrainz uses to seperate "similar" recordings.
-  // These are ones that are close enough to the original recording that
-  // we can use their end time.
-  const isValidDisambiguation = (text: string) => {
-    if (!text) return true; // No disambiguation, valid
-    if (text == "clean" || text == "explicit") return true;
-    if (text.includes("Dolby Atmos")) return true;
-    if (text.includes("album version")) return true;
-    if (text.includes("Eurovision")) return true; // This is slightly scary, but it should mostly match the real song
-                                                  // If anything it's too short, and that is fine I think...
-    return false;
-  }
-
+  // When the link changes we try to find the song on musicbrainz
+  // to get it's length, the TFM API does not provide this info unfortunately.
   useEffect(() => {
     if (!link) return;
 
@@ -122,36 +75,18 @@ export default function Home() {
     musicbrainz.search("recording", {query}).then((res) => {
       const recordings = res.recordings;
       if (recordings.length === 0) setEnd(null);
-      console.log("Found " + recordings.length + " recordings for " + title + " by " + artist + " (" + query + ")");
 
       // Filter results for what we want
       for(let i = 0; i < recordings.length; i++) {
         const recording = recordings[i];
-        if (!isValidDisambiguation(recording.disambiguation)) continue; // Skip disambiguated recordings
-        console.log(i + " passed disambiguation check");
-
-        if (recording.video) continue; // Skip video recordings
-        console.log(i + " passed video check");
-
-        const title_similarity = similarity(recording.title.replaceAll("'", "’").toLowerCase(), search_title.replaceAll("'", "’").toLowerCase());
-        if (title_similarity < 0.75) continue;
-        console.log(i + " passed similarity check");
-
-        if (recording.title.replaceAll("'", "’").toLowerCase() != search_title.replaceAll("'", "’").toLowerCase()) continue; // Skip recordings with different titles
-        console.log(i + " passed title check");
-
-        if (!recording.length) continue; // Skip recordings without length
-        console.log(i + " passed length check");
-
-        if (recording.length < 20000) continue; // Skip recordings with length less than 20 seconds
-        console.log(i + " passed 20s check");
+        const valid = isValidRecording(recording, search_title);
+        if (!valid) continue;
 
         // Extract the data we want
         const length = recording.length;
-        const endTime = new Date(timestamp * 1000);
+        const endTime = timestampDate;
         endTime.setSeconds(endTime.getSeconds() + length / 1000);
         setEnd(endTime);
-        console.log("Found end time: " + endTime.toString() + " for " + title + " by " + artist);
         return;
       }
       setEnd(null);
@@ -161,21 +96,21 @@ export default function Home() {
     });
   }, [link]);
 
-  // Update states when song data changes
   useEffect(() => {
     if (!songData) return;
     setLink(songData.data.link);
-  }, [songData])
+  }, [songData]);
 
+  // Current song playback counter, updated every 2 seconds.
   useEffect(() => {
     if (!timestamp) return;
     const interval = setInterval(() => {
-      setSince(timeSince(new Date(timestamp * 1000)));
+      setSince(timeSince(timestampDate));
     }, 1000);
     return () => clearInterval(interval);
   }, [timestamp]);
 
-  if (songError | presenterError) return <div>TruckersFM API failed to return data</div>;
+  if (songError || presenterError) return <div>TruckersFM API failed to return data</div>;
 
   return (
     <div className="border border-[#191919] flex rounded-xl w-xl font-geist bg-[#131313] relative p-4 overflow-hidden" style={{
@@ -183,7 +118,7 @@ export default function Home() {
     }}>
       {/* Display the cover if we have one */}
       {cover && <div className="min-w-32 min-h-32 rounded-md border z-10" style={{
-        backgroundImage: `url(${getImageUrl()})`, 
+        backgroundImage: `url(${getImageUrl(intermission, intermission_image, cover)})`, 
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }} />}
@@ -207,7 +142,7 @@ export default function Home() {
         <p className="text-sm">by {intermission ? name : artist}</p>
         
         {
-          end && !intermission ? <p className="text-sm">{since} / {timeBetween(new Date(timestamp * 1000), end)}</p> : null
+          end && !intermission ? <p className="text-sm">{since} / {timeBetween(timestampDate, end)}</p> : null
         }
 
         {
@@ -218,19 +153,21 @@ export default function Home() {
       {/* If we have a cover image, then use that for the background too. */}
       {cover &&
         <div className="absolute w-full h-full rounded-lg -my-4 -mx-4" style={{ 
-          backgroundImage: `url(${getImageUrl()})`, 
+          backgroundImage: `url(${getImageUrl(intermission, intermission_image, cover)})`, 
           backgroundSize: 'cover', 
           backgroundPosition: 'center',
           filter: 'blur(20px) brightness(0.3)',
         }} />
       }
 
-      {/* Progress bar if we found end time info. */}
+      {/* Progress bar if we found end time info */}
       {end && !intermission && 
-        <ProgressBar 
+        <ProgressBar
           progress={
-            Math.floor((new Date().getTime() - new Date(timestamp * 1000).getTime()) / (end.getTime() - new Date(timestamp * 1000).getTime()) * 100)
-          } 
+            (new Date().getTime() - timestampDate.getTime()) /
+            (end.getTime() - timestampDate.getTime()) *
+            100
+          }
         />
       }
     </div>
